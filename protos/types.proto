@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+message PartitionKey {
+  repeated Value values = 1;
+}
+
+message Document {
+  oneof format {
+    // The document is provided in raw JSON format, which must be parsed.
+    string json = 1;
+
+    // TODO: We could build a representation of the document in native protobuf if we wanted to.
+  }
+}
+
+message Value {
+  oneof value {
+    // A Value as a raw JSON string that will be parsed by the server.
+    // This is useful for values that are not supported by the protobuf type system.
+    // This is expected to be valid JSON.
+    // For example, if you want to provide a string, this value needs to _include_ the quotes.
+    string jsonValue = 1;
+
+    // TODO: We can represent data natively if we want.
+  }
+}
+
+message QueryParameter {
+  string name = 1;
+  Value value = 2;
+}
+
+message Query {
+  string text = 1;
+  QueryParameter parameters = 2;
+}
+
+message Error {
+  int32 status_code = 1;
+  string message = 2;
+}

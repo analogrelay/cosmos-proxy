@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+import "types.proto";
+
+option csharp_namespace = "Microsoft.Azure.Cosmos.Proxy.Protos";
+option go_package = "github.com/analogrelay/cosmos-proxy/samples/go/proto";
+
+package container.v1;
+
+// The greeting service definition.
+service Container {
+  // Lists accounts provided by this proxy
+  rpc QueryItems (QueryRequest) returns (QueryReply);
+}
+
+message ContainerReference {
+  string accountMoniker = 1;
+  string databaseId = 2;
+  string containerId = 3;
+}
+
+message QueryRequest {
+  ContainerReference container = 1;
+  Query query = 2;
+  string continuationToken = 3;
+}
+
+message DocumentPage {
+  repeated Document documents = 1;
+  string continuationToken = 2;
+}
+
+message QueryReply {
+  oneof result {
+    Error error = 1;
+    DocumentPage success = 2;
+  }
+}
+
+message ListDatabasesReply {
+  repeated string databases = 1;
+}
