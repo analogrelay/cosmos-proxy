@@ -1,5 +1,8 @@
 syntax = "proto3";
 
+option csharp_namespace = "Microsoft.Azure.Cosmos.Proxy.Protos";
+option go_package = "github.com/analogrelay/cosmos-proxy/samples/go/proto";
+
 message PartitionKey {
   repeated Value values = 1;
 }
