@@ -22,18 +22,20 @@ To define a proxy account, you need to set the following environment variables:
 * `Proxy__Accounts__[name]__AccountKey` - The Cosmos DB account key (or, omit this to use Entra ID)
 
 The `[name]` placeholder is a unique name within the proxy to identify the account.
-It can be whatever you'd like.
+The value `Default` is reserved for the default account, which is used when no account is specified.
+Otherwise, it can be whatever you'd like.
+
 For example:
 
 ```bash
-export Proxy__Accounts__MyAccount__Endpoint=https://myaccount.documents.azure.com:443/
-export Proxy__Accounts__MyAccount__AccountKey=<secret key redacted>
+export Proxy__Accounts__Default__Endpoint=https://myaccount.documents.azure.com:443/
+export Proxy__Accounts__Default__AccountKey=<secret key redacted>
 ```
 
 ### With Docker
 
 ```
-docker run -e Proxy__Accounts__MyAccount__Endpoint -e Proxy__Accounts__MyAccount__AccountKey -p 5050:5050 -p 5051:5051 cosmos-proxy:local
+docker run -e Proxy__Accounts__Default__Endpoint -e Proxy__Accounts__Default__AccountKey -p 5050:5050 -p 5051:5051 cosmos-proxy:local
 ```
 
 ### With .NET
