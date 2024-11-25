@@ -2,7 +2,7 @@
 
 A Prototype Cosmos Proxy Sidecar, written in .NET.
 
-Functionality is **extremely limited*. Currently, it only supports enough API to support a simple (cross-partition!) query.
+Functionality is **extremely limited**. Currently, it only supports enough API to support a simple (cross-partition!) query.
 Specifically, the following APIs are _partially_ implemented
 
 * "Get Account" API, `GET /`, to fetch account metadata for Global Endpoint Manager.
@@ -74,6 +74,7 @@ docker run -d -e Proxy__Accounts__Default__Endpoint -e Proxy__Accounts__Default_
 ### With Python Sample
 
 * Install Python
+* Cd into `samples/python`
 * (Optional) Set up a virtual environment, `python -m venv .venv` and activate it with `source .venv/bin/activate` / `.\.venv\Scripts\Activate.ps1`
 * Run `pip install -r requirements.txt`
 * Run `python main.py http://localhost:5051 <cosmos-database> <cosmos-container> <query>`
