@@ -29,7 +29,7 @@ For example:
 
 ```bash
 export Proxy__Accounts__Default__Endpoint=https://myaccount.documents.azure.com:443/
-export Proxy__Accounts__Default__AccountKey=<secret key redacted>
+export Proxy__Accounts__Default__AccountKey=<put your secret key here>
 ```
 
 ### With Docker
@@ -53,4 +53,5 @@ docker run -e Proxy__Accounts__Default__Endpoint -e Proxy__Accounts__Default__Ac
 
 * Install [Go](https://golang.org/)
 * Cd into `samples/go`
-* Run `go run . localhost:5051 <cosmos-account> <cosmos-key> <cosmos-database> <cosmos-container>`
+* Run `go run . localhost:5051 <cosmos-database> <cosmos-container> <query>`
+    For example, `go run . localhost:5051 mydatabase mycontainer "SELECT * FROM c"`
