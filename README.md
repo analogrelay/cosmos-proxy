@@ -2,12 +2,20 @@
 
 A Prototype Cosmos Proxy Sidecar, written in .NET.
 
+Functionality is **extremely limited*. Currently, it only supports enough API to support a simple (cross-partition!) query.
+Specifically, the following APIs are _partially_ implemented
+
+* "Get Account" API, `GET /`, to fetch account metadata for Global Endpoint Manager.
+    * We proxy this request, but provide only a single read/write endpoint, which is this proxy service.
+* "Query Documents" API, `POST /dbs/{databaseId}/colls/{collectionId}/docs` with either `x-ms-documentdb-isquery: True` or `x-ms-documentdb-query: True` (some SDKs use one, some use the other...)
+    * We run this request through the .NET SDK and return the results.
+
 ## Building the proxy
 
 ### With Docker
 
 * Install Docker
-* Run `docker build -t cosmos-proxy:local .`
+* Run `.\build.ps1`
 
 ### With .NET
 
@@ -35,8 +43,10 @@ export Proxy__Accounts__Default__AccountKey=<put your secret key here>
 ### With Docker
 
 ```
-docker run -e Proxy__Accounts__Default__Endpoint -e Proxy__Accounts__Default__AccountKey -p 5050:5050 -p 5051:5051 cosmos-proxy:local
+docker run -d -e Proxy__Accounts__Default__Endpoint -e Proxy__Accounts__Default__AccountKey --name cosmos-proxy -p 5051:5051 ghcr.io/analogrelay/cosmos-proxy:local
 ```
+
+**NOTE:** The docker image currently only supports HTTP on port 5051. If you need HTTPS, you will need to run the .NET app directly.
 
 ### With .NET
 
@@ -53,5 +63,17 @@ docker run -e Proxy__Accounts__Default__Endpoint -e Proxy__Accounts__Default__Ac
 
 * Install [Go](https://golang.org/)
 * Cd into `samples/go`
-* Run `go run . localhost:5051 <cosmos-database> <cosmos-container> <query>`
-    For example, `go run . localhost:5051 mydatabase mycontainer "SELECT * FROM c"`
+* Run `go run . http://localhost:5051 <cosmos-database> <cosmos-container> <query>`
+
+### With NodeJS Sample
+
+* Install Node
+* Cd into `samples/nodejs`
+* Run `node index.js http://localhost:5051 <cosmos-database> <cosmos-container> <query>`
+
+### With Python Sample
+
+* Install Python
+* (Optional) Set up a virtual environment, `python -m venv .venv` and activate it with `source .venv/bin/activate` / `.\.venv\Scripts\Activate.ps1`
+* Run `pip install -r requirements.txt`
+* Run `python main.py http://localhost:5051 <cosmos-database> <cosmos-container> <query>`

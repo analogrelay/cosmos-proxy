@@ -14,7 +14,7 @@ import (
 func main() {
 	// The first argument is the target host/port
 	if len(os.Args) < 5 {
-		fmt.Printf("Usage: %s <host>:<port> <db> <container> <query>\n", os.Args[0])
+		fmt.Printf("Usage: %s <endpoint> <db> <container> <query>\n", os.Args[0])
 		return
 	}
 
@@ -28,7 +28,7 @@ func main() {
 }
 
 func ProxyViaRestSdk(target, db, container, query string) {
-	client, err := azcosmos.NewClientFromConnectionString("AccountEndpoint=https://"+target+";AccountKey=yeep;", nil)
+	client, err := azcosmos.NewClientFromConnectionString("AccountEndpoint="+target+";AccountKey=yeep;", nil)
 	if err != nil {
 		fmt.Printf("Failed to create client: %v\n", err)
 		return
