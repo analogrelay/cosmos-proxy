@@ -6,12 +6,12 @@ public class IsQueryRequestAttribute : Attribute, IActionConstraint
 
     public bool Accept(ActionConstraintContext context)
     {
-        if(!context.RouteContext.HttpContext.Request.Headers.TryGetValue("x-ms-documentdb-query", out var isQuery)) {
-            Console.WriteLine("x-ms-documentdb-query header not found");
-            return false;
-        }
+        var queryValue = context.RouteContext.HttpContext.Request.Headers.TryGetValue("x-ms-documentdb-query", out var query)
+            ? query.ToString()
+            : context.RouteContext.HttpContext.Request.Headers.TryGetValue("x-ms-documentdb-isquery", out var isQuery)
+                ? isQuery.ToString()
+                : null;
 
-        Console.WriteLine("x-ms-documentdb-query header == " + isQuery);
-        return string.Equals(isQuery.ToString(), "true", StringComparison.OrdinalIgnoreCase);
+        return string.Equals(queryValue, "true", StringComparison.OrdinalIgnoreCase);
     }
 }

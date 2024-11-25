@@ -1,0 +1,17 @@
+{
+  "name": "cosmos-proxy-sample-nodejs",
+  "version": "0.0.1",
+  "description": "Sample of using the cosmos-proxy from NodeJS",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@azure/cosmos": "^4.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.9.4"
+  }
+}
