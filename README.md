@@ -10,7 +10,13 @@ Specifically, the following APIs are _partially_ implemented
 * "Query Documents" API, `POST /dbs/{databaseId}/colls/{collectionId}/docs` with either `x-ms-documentdb-isquery: True` or `x-ms-documentdb-query: True` (some SDKs use one, some use the other...)
     * We run this request through the .NET SDK and return the results.
 
+In addition to the HTTP APIs, a gRPC API is provided.
+The gRPC API allows us to explore a protobuf API for the proxy which may provide more flexibility and performance than the HTTP API.
+However, the SDK would need to be updated to support this new API.
+
 ## Building the proxy
+
+*Building is not necessary to test out the proxy, you can pull the image from the GitHub Container Registry. Skip to "Running the proxy / With Docker".*
 
 ### With Docker
 
@@ -33,6 +39,67 @@ The `[name]` placeholder is a unique name within the proxy to identify the accou
 The value `Default` is reserved for the default account, which is used when no account is specified.
 Otherwise, it can be whatever you'd like.
 
+### With Docker
+
+```
+docker run -d -e DOTNET_ENVIRONMENT=Development -e Proxy__Accounts__Default__Endpoint=<endpoint_url> -e Proxy__Accounts__Default__AccountKey=<account_key> --name cosmos-proxy -p 5051:5051 ghcr.io/analogrelay/cosmos-proxy:local
+```
+
+**NOTE:** This configures the proxy to run in "Development" mode, which includes Swagger UI and other utilities. In production, you should omit the `-e DOTNET_ENVIRONMENT=Development` flag.
+
+Monitor logs with:
+
+```
+docker logs -f cosmos-proxy
+```
+
+(Press "Ctrl-C" to stop monitoring logs. This will NOT stop the proxy.)
+
+Stop the proxy with:
+
+```
+docker stop cosmos-proxy
+```
+
+Remove the proxy container with:
+
+```
+docker rm cosmos-proxy
+```
+
+**NOTE:** The docker image currently only supports HTTP on port 5051. If you need HTTPS, you will need to run the .NET app directly.
+
+Verify the proxy is up by navigating to `http://localhost:5051/`. You should see something like this:
+
+```json
+{
+  "writeableLocations": [
+    {
+      "name": "Local",
+      "databaseAccountEndpoint": "http://localhost:5051"
+    }
+  ],
+  "readableLocations": [
+    {
+      "name": "Local",
+      "databaseAccountEndpoint": "http://localhost:5051"
+    }
+  ],
+  "enableMultipleWriteLocations": false,
+  "userConsistencyPolicy": {
+    "defaultConsistencyLevel": "Session",
+    "maxStalenessPrefix": 0,
+    "maxIntervalInSeconds": 0
+  }
+}
+```
+
+Now, proceed to "Using the proxy".
+
+### With .NET
+
+First, set the necessary environment variables.
+
 For example:
 
 ```bash
@@ -40,17 +107,38 @@ export Proxy__Accounts__Default__Endpoint=https://myaccount.documents.azure.com:
 export Proxy__Accounts__Default__AccountKey=<put your secret key here>
 ```
 
-### With Docker
+Then, run:
 
+```bash
+dotnet run --project src/cosmos-proxy/cosmos-proxy.csproj
 ```
-docker run -d -e Proxy__Accounts__Default__Endpoint -e Proxy__Accounts__Default__AccountKey --name cosmos-proxy -p 5051:5051 ghcr.io/analogrelay/cosmos-proxy:local
+
+Verify the proxy is up by navigating to `https://localhost:5050/`. You should see something like this:
+
+```json
+{
+  "writeableLocations": [
+    {
+      "name": "Local",
+      "databaseAccountEndpoint": "http://localhost:5051"
+    }
+  ],
+  "readableLocations": [
+    {
+      "name": "Local",
+      "databaseAccountEndpoint": "http://localhost:5051"
+    }
+  ],
+  "enableMultipleWriteLocations": false,
+  "userConsistencyPolicy": {
+    "defaultConsistencyLevel": "Session",
+    "maxStalenessPrefix": 0,
+    "maxIntervalInSeconds": 0
+  }
+}
 ```
 
-**NOTE:** The docker image currently only supports HTTP on port 5051. If you need HTTPS, you will need to run the .NET app directly.
-
-### With .NET
-
-* Run `dotnet run --project src/cosmos-proxy/cosmos-proxy.csproj`, if the environment variables are set they will be read automatically.
+Now, proceed to "Using the proxy".
 
 ## Using the proxy
 
